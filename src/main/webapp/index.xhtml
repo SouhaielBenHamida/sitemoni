@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+
+	<!--   <p:messages id="messages" /> -->
+	<p:growl id="messages"></p:growl>
+	<p:dataTable value="#{checkListController.checks}" var="check"
+		id="chekTable">
+		<p:column headerText="name">
+		#{check.name}
+	</p:column>
+		<p:column headerText="url">
+			<a href="#{check.url}" target="_blank"> #{check.url} </a>
+		</p:column>
+		<p:column headerText="operation">
+			<h:form>
+				<p:commandButton value="edite"
+					action="#{checkListController.setCheck(check)}" update="chekForm"
+					oncomplete="PF('checkDialog').show()" />
+				<p:commandButton value="remove"
+					action="#{checkListController.remove(check)}"
+					update="chekTable, :messages">
+					<p:confirm header="Confirmation" message="Are you sure?"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</h:form>
+		</p:column>
+	</p:dataTable>
+	<br></br>
+	<h:form>
+		<p:commandButton action="#{checkListController.clear()}"
+			oncomplete="PF('checkDialog').show()" value="add check"
+			resetValues="true" update=":checkDialog" />
+	</h:form>
+	<p:dialog widgetVar="checkDialog" closeOnEscape="true" modal="true"
+		header="check" id="checkDialog">
+		<h:form id="chekForm">
+			<p:messages />
+			<p:focus />
+			<p:panelGrid columns="2">
+		name:
+		<p:inputText value="#{checkListController.check.name}" />
+		
+		url:
+		<p:inputText value="#{checkListController.check.url}" />
+			</p:panelGrid>
+			<p:commandButton value="save" action="#{checkListController.save()}"
+				update="chekForm, :chekTable"
+				oncomplete="handleDialogSubmit(args, 'checkDialog')" />
+		</h:form>
+	</p:dialog>
+	<script type="text/javascript">
+	    function handleDialogSubmit(args, dialogName) {
+	        if (!args.validationFailed) {
+	            PF(dialogName).hide();
+	        }
+	    }
+	</script>
+	<h:form>
+		<p:confirmDialog global="true" closeOnEscape="true">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	</h:form>
+</h:body>
+</html>
